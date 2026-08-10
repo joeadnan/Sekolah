@@ -1,0 +1,231 @@
+PRAGMA foreign_keys = ON;
+
+CREATE TABLE IF NOT EXISTS "SiteSetting" (
+  "id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+  "schoolName" TEXT NOT NULL DEFAULT 'SMA Cerdas Nusantara',
+  "tagline" TEXT NOT NULL DEFAULT 'Berkarakter, Berprestasi, dan Siap Masa Depan',
+  "logoText" TEXT NOT NULL DEFAULT 'SCN',
+  "about" TEXT,
+  "vision" TEXT,
+  "mission" TEXT,
+  "address" TEXT,
+  "phone" TEXT,
+  "whatsapp" TEXT,
+  "email" TEXT,
+  "principalName" TEXT,
+  "establishedYear" INTEGER,
+  "instagramUrl" TEXT,
+  "facebookUrl" TEXT,
+  "youtubeUrl" TEXT,
+  "createdAt" TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  "updatedAt" TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS "Teacher" (
+  "id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+  "nip" TEXT NOT NULL,
+  "fullName" TEXT NOT NULL,
+  "position" TEXT NOT NULL DEFAULT 'Guru',
+  "education" TEXT,
+  "email" TEXT,
+  "phone" TEXT,
+  "address" TEXT,
+  "photoUrl" TEXT,
+  "joinDate" TEXT,
+  "status" TEXT NOT NULL DEFAULT 'active',
+  "createdAt" TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  "updatedAt" TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS "ClassRoom" (
+  "id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+  "name" TEXT NOT NULL,
+  "gradeLevel" INTEGER NOT NULL,
+  "academicYear" TEXT NOT NULL DEFAULT '2026/2027',
+  "capacity" INTEGER NOT NULL DEFAULT 36,
+  "homeroomTeacherId" INTEGER,
+  "createdAt" TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  "updatedAt" TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY ("homeroomTeacherId") REFERENCES "Teacher" ("id") ON DELETE SET NULL ON UPDATE CASCADE
+);
+
+CREATE TABLE IF NOT EXISTS "Subject" (
+  "id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+  "code" TEXT NOT NULL,
+  "name" TEXT NOT NULL,
+  "description" TEXT,
+  "teacherId" INTEGER,
+  "createdAt" TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  "updatedAt" TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY ("teacherId") REFERENCES "Teacher" ("id") ON DELETE SET NULL ON UPDATE CASCADE
+);
+
+CREATE TABLE IF NOT EXISTS "Student" (
+  "id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+  "nisn" TEXT NOT NULL,
+  "fullName" TEXT NOT NULL,
+  "gender" TEXT NOT NULL,
+  "birthPlace" TEXT,
+  "birthDate" TEXT,
+  "email" TEXT,
+  "phone" TEXT,
+  "address" TEXT,
+  "classRoomId" INTEGER,
+  "guardianName" TEXT,
+  "guardianPhone" TEXT,
+  "status" TEXT NOT NULL DEFAULT 'active',
+  "createdAt" TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  "updatedAt" TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY ("classRoomId") REFERENCES "ClassRoom" ("id") ON DELETE SET NULL ON UPDATE CASCADE
+);
+
+CREATE TABLE IF NOT EXISTS "Attendance" (
+  "id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+  "studentId" INTEGER NOT NULL,
+  "date" TEXT NOT NULL,
+  "status" TEXT NOT NULL DEFAULT 'present',
+  "note" TEXT,
+  "createdAt" TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  "updatedAt" TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY ("studentId") REFERENCES "Student" ("id") ON DELETE CASCADE ON UPDATE CASCADE
+);
+
+CREATE TABLE IF NOT EXISTS "Grade" (
+  "id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+  "studentId" INTEGER NOT NULL,
+  "subjectId" INTEGER NOT NULL,
+  "semester" TEXT NOT NULL DEFAULT '1',
+  "score" REAL NOT NULL,
+  "note" TEXT,
+  "createdAt" TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  "updatedAt" TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY ("studentId") REFERENCES "Student" ("id") ON DELETE CASCADE ON UPDATE CASCADE,
+  FOREIGN KEY ("subjectId") REFERENCES "Subject" ("id") ON DELETE CASCADE ON UPDATE CASCADE
+);
+
+CREATE TABLE IF NOT EXISTS "Announcement" (
+  "id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+  "title" TEXT NOT NULL,
+  "content" TEXT NOT NULL,
+  "startDate" TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  "endDate" TEXT,
+  "priority" TEXT NOT NULL DEFAULT 'normal',
+  "isActive" INTEGER NOT NULL DEFAULT 1,
+  "createdAt" TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  "updatedAt" TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS "Event" (
+  "id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+  "title" TEXT NOT NULL,
+  "location" TEXT,
+  "startDate" TEXT NOT NULL,
+  "endDate" TEXT,
+  "description" TEXT,
+  "isActive" INTEGER NOT NULL DEFAULT 1,
+  "createdAt" TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  "updatedAt" TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS "NewsPost" (
+  "id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+  "title" TEXT NOT NULL,
+  "slug" TEXT NOT NULL,
+  "category" TEXT NOT NULL DEFAULT 'berita',
+  "excerpt" TEXT,
+  "content" TEXT NOT NULL,
+  "coverImageUrl" TEXT,
+  "status" TEXT NOT NULL DEFAULT 'published',
+  "publishedAt" TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  "createdAt" TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  "updatedAt" TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS "Facility" (
+  "id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+  "name" TEXT NOT NULL,
+  "iconClass" TEXT NOT NULL DEFAULT 'building',
+  "description" TEXT NOT NULL,
+  "imageUrl" TEXT,
+  "isActive" INTEGER NOT NULL DEFAULT 1,
+  "createdAt" TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  "updatedAt" TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS "Extracurricular" (
+  "id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+  "name" TEXT NOT NULL,
+  "coach" TEXT,
+  "schedule" TEXT,
+  "description" TEXT NOT NULL,
+  "isActive" INTEGER NOT NULL DEFAULT 1,
+  "createdAt" TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  "updatedAt" TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS "Gallery" (
+  "id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+  "title" TEXT NOT NULL,
+  "category" TEXT NOT NULL DEFAULT 'kegiatan',
+  "imageUrl" TEXT NOT NULL,
+  "description" TEXT,
+  "isFeatured" INTEGER NOT NULL DEFAULT 0,
+  "createdAt" TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  "updatedAt" TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS "Download" (
+  "id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+  "title" TEXT NOT NULL,
+  "category" TEXT,
+  "description" TEXT,
+  "fileUrl" TEXT NOT NULL,
+  "isActive" INTEGER NOT NULL DEFAULT 1,
+  "createdAt" TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  "updatedAt" TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS "AdmissionApplication" (
+  "id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+  "fullName" TEXT NOT NULL,
+  "uniform" TEXT NOT NULL,
+  "gender" TEXT NOT NULL,
+  "religion" TEXT NOT NULL,
+  "birthPlace" TEXT NOT NULL,
+  "birthDate" TEXT NOT NULL,
+  "age" INTEGER NOT NULL,
+  "familyCardNumber" TEXT NOT NULL,
+  "nik" TEXT NOT NULL,
+  "heightCm" INTEGER,
+  "weightKg" INTEGER,
+  "motherName" TEXT NOT NULL,
+  "motherNik" TEXT NOT NULL,
+  "address" TEXT NOT NULL,
+  "village" TEXT NOT NULL,
+  "district" TEXT NOT NULL,
+  "status" TEXT NOT NULL DEFAULT 'new',
+  "note" TEXT,
+  "createdAt" TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  "updatedAt" TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS "ContactMessage" (
+  "id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+  "name" TEXT NOT NULL,
+  "email" TEXT,
+  "phone" TEXT,
+  "subject" TEXT NOT NULL,
+  "message" TEXT NOT NULL,
+  "status" TEXT NOT NULL DEFAULT 'new',
+  "createdAt" TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  "updatedAt" TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE UNIQUE INDEX IF NOT EXISTS "Teacher_nip_key" ON "Teacher"("nip");
+CREATE UNIQUE INDEX IF NOT EXISTS "ClassRoom_name_key" ON "ClassRoom"("name");
+CREATE UNIQUE INDEX IF NOT EXISTS "Subject_code_key" ON "Subject"("code");
+CREATE UNIQUE INDEX IF NOT EXISTS "Student_nisn_key" ON "Student"("nisn");
+CREATE UNIQUE INDEX IF NOT EXISTS "Attendance_studentId_date_key" ON "Attendance"("studentId", "date");
+CREATE UNIQUE INDEX IF NOT EXISTS "Grade_studentId_subjectId_semester_key" ON "Grade"("studentId", "subjectId", "semester");
+CREATE UNIQUE INDEX IF NOT EXISTS "NewsPost_slug_key" ON "NewsPost"("slug");
+CREATE UNIQUE INDEX IF NOT EXISTS "AdmissionApplication_nik_key" ON "AdmissionApplication"("nik");

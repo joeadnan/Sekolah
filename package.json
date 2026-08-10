@@ -1,0 +1,33 @@
+{
+  "name": "school-website-nextjs-turso-sqlite",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "eslint .",
+    "db:schema:apply": "node scripts/apply-turso-schema.mjs",
+    "db:seed": "tsx database/seed.ts",
+    "db:setup": "npm run db:schema:apply && npm run db:seed",
+    "setup": "npm run db:setup"
+  },
+  "dependencies": {
+    "@libsql/client": "0.8.1",
+    "next": "15.5.18",
+    "react": "19.1.0",
+    "react-dom": "19.1.0"
+  },
+  "devDependencies": {
+    "@types/node": "22.10.0",
+    "@types/react": "19.0.0",
+    "@types/react-dom": "19.0.0",
+    "eslint": "9.17.0",
+    "eslint-config-next": "15.5.18",
+    "tsx": "4.19.0",
+    "typescript": "5.7.2"
+  },
+  "engines": {
+    "node": ">=20.0.0"
+  }
+}
